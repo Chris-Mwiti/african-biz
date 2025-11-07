@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma": "prisma",
     "seed": "prisma db seed"
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.18.0",
     "stripe": "^19.2.0"
   },
   "devDependencies": {
