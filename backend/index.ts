@@ -1,14 +1,14 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './routes/auth.routes';
-import listingRoutes from './routes/listing.routes';
-import adminRoutes from './routes/admin.routes';
-import stripeRoutes from './routes/stripe.routes';
-import categoryRoutes from './routes/category.routes';
-import analyticRoutes from './routes/analytic.routes'; // New import
-import eventRoutes from './routes/event.routes';
-import blogRoutes from './routes/blog.routes';
+import authRoutes from './src/routes/auth.routes';
+import listingRoutes from './src/routes/listing.routes';
+import adminRoutes from './src/routes/admin.routes';
+import stripeRoutes from './src/routes/stripe.routes';
+import categoryRoutes from './src/routes/category.routes';
+import analyticRoutes from './src/routes/analytic.routes'; // New import
+import eventRoutes from './src/routes/event.routes';
+import blogRoutes from './src/routes/blog.routes';
 
 const app = express();
 const port = process.env.PORT || 5000;
