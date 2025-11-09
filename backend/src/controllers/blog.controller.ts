@@ -34,6 +34,7 @@ export const createBlog = async (req: Request, res: Response) => {
 
     res.status(201).json(blog);
   } catch (error) {
+    console.error("error creating blog: ", error)
     res.status(500).json({ message: 'Error creating blog post' });
   }
 };
@@ -48,6 +49,7 @@ export const getBlogs = async (req: Request, res: Response) => {
     });
     res.json(blogs);
   } catch (error) {
+    console.error("error fetching blogs: ", error)
     res.status(500).json({ message: 'Error fetching blog posts' });
   }
 };
@@ -69,6 +71,7 @@ export const getBlogsByUserId = async (req: Request, res: Response) => {
     });
     res.json(blogs);
   } catch (error) {
+     console.error("error fetching blog: ", error)
     res.status(500).json({ message: 'Error fetching user blog posts' });
   }
 };
@@ -88,6 +91,8 @@ export const getBlogById = async (req: Request, res: Response) => {
     }
     res.json(blog);
   } catch (error) {
+     console.error("error fetching blog: ", error)
+    res.status(500).json({ message: 'Error fetching user blog posts' });
     res.status(500).json({ message: 'Error fetching blog post' });
   }
 };
@@ -103,6 +108,7 @@ export const updateBlog = async (req: Request, res: Response) => {
     });
     res.json(updatedBlog);
   } catch (error) {
+     console.error("error updating blog: ", error)
     res.status(500).json({ message: 'Error updating blog post' });
   }
 };
@@ -116,6 +122,7 @@ export const deleteBlog = async (req: Request, res: Response) => {
     });
     res.status(204).send();
   } catch (error) {
+     console.error("error deleting blog: ", error)
     res.status(500).json({ message: 'Error deleting blog post' });
   }
 };

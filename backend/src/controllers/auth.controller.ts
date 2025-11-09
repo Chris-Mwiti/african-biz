@@ -56,6 +56,7 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({ token, user });
   } catch (error) {
+    console.error("something went wrong during login operation: ", error)
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

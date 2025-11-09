@@ -58,7 +58,7 @@ export function BlogCard({ blog }: BlogCardProps) {
           <div className="mb-4 flex flex-wrap items-center gap-3 text-muted-foreground" style={{ fontSize: '12px' }}>
             <div className="flex items-center gap-1">
               <User className="h-3.5 w-3.5" />
-              <span>{blog.author}</span>
+              <span>{blog.author.name}</span>
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />

@@ -92,11 +92,16 @@ export function Analytics() {
     { date: '2023-11-01', views: 30, clicks: 8, contacts: 3 },
   ];
 
-  const totalViews = currentAnalytics.views;
-  const totalClicks = currentAnalytics.clicks;
-  const totalContacts = currentAnalytics.contacts;
-  const totalEvents = currentAnalytics.eventsCount;
+  //@todo: Improve the error handling for this section
+  const totalViews = currentAnalytics.views || 0;
+  const totalClicks = currentAnalytics.clicks || 0;
+  const totalContacts = currentAnalytics.contacts || 0;
+  const totalEvents = currentAnalytics.eventsCount || 0;
   const conversionRate = totalClicks > 0 ? ((totalContacts / totalClicks) * 100).toFixed(1) : '0.0';
+  
+
+  //debugging purpose
+  console.log("total events: ", totalEvents)
 
   return (
     <div className="min-h-screen bg-background p-6">
