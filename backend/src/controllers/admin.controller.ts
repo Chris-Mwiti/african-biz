@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { Role, ApprovalStatus,ListingStatus  } from '@prisma/client'; // UserStatus added
+import { Role, ApprovalStatus,ListingStatus, UserStatus  } from '@prisma/client'; // UserStatus added
 
 // Get Admin Dashboard Overview Stats
 export const getAdminOverviewStats = async (req: Request, res: Response) => {
   try {
     const totalUsers = await prisma.user.count();
-    const activeUsers = 0;
+    const activeUsers = await prisma.user.count({where: {status: UserStatus.ACTIVE}});
     const premiumMembers = await prisma.user.count({ where: { role: Role.PREMIUM } });
     const basicMembers = await prisma.user.count({ where: { role: Role.MEMBER } }); // Assuming 'MEMBER' is basic
      const totalListings = await prisma.listing.count();
@@ -15,7 +15,12 @@ export const getAdminOverviewStats = async (req: Request, res: Response) => {
     const verifiedListings = await prisma.listing.count({ where: { verified: true } });
 
     // Placeholder for monthly revenue - needs actual payment integration
-    const monthlyRevenue = 0; // TODO: Implement actual revenue calculation
+    //const monthlyRevenue = await prisma.subscription.aggregate({
+     // _sum: {
+      //  amount: true
+      //}    
+    //}); // TODO: Implement actual revenue calculation
+    const monthlyRevenue = 0
 
     res.json({
       totalUsers,
@@ -29,6 +34,7 @@ export const getAdminOverviewStats = async (req: Request, res: Response) => {
       monthlyRevenue,
     });
   } catch (error) {
+    console.error("analytics error: ", error)
     res.status(500).json({ message: 'Error fetching admin overview stats', error });
   }
 };
@@ -132,7 +138,7 @@ export const updateUserStatus = async (req: Request, res: Response) => {
   try {
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { subscription_status: status },
+      data: { status: status },
     });
     res.json(updatedUser);
   } catch (error) {
