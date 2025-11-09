@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { LoginDto, SignUpDto, UserDto } from '@/dto/auth.dto';
+import { SignInDto, SignUpDto, UserDto } from '@/dto/auth.dto';
 import api from '@/api';
 
 export const useLogin = () => {
   return useMutation({ 
-    mutationFn: async (credentials: LoginDto) => {
+    mutationFn: async (credentials: SignInDto) => {
       const { data } = await api.post('/auth/login', credentials);
       return data;
     }

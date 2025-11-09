@@ -21,6 +21,8 @@ export function BlogCard({ blog }: BlogCardProps) {
     });
   };
 
+  console.log("blog card: ", blog)
+
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <Link to={`/blog/${blog.id}`}>
@@ -56,11 +58,7 @@ export function BlogCard({ blog }: BlogCardProps) {
 
           {/* Meta */}
           <div className="mb-4 flex flex-wrap items-center gap-3 text-muted-foreground" style={{ fontSize: '12px' }}>
-            <div className="flex items-center gap-1">
-              <User className="h-3.5 w-3.5" />
-              <span>{blog.author.name}</span>
-            </div>
-            <div className="flex items-center gap-1">
+           <div className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
               <span>{formatDate(publishDate)}</span>
             </div>

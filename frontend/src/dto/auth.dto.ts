@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { UserStatus } from '@/lib/types';
 
 export enum Role {
   MEMBER = 'MEMBER',
@@ -21,11 +22,6 @@ export const SignInSchema = z.object({
 });
 
 export type SignInDto = z.infer<typeof SignInSchema>;
-
-
-
-import { UserStatus } from '../../lib/types'; // Import UserStatus
-
 
 
 export interface UserDto {

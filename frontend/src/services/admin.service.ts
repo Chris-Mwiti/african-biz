@@ -9,7 +9,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
       UserStatus,
     } from '../lib/types';
     import { UpdateUserStatusDto, UpdateUserRoleDto } from '../dto/user.dto';
-    import { UpdateListingStatusDto } from '../dto/listing.dto';
 
     // Dashboard Stats
     export const useGetAdminOverviewStats = () => {
