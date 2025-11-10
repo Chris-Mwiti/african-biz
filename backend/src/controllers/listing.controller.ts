@@ -105,6 +105,7 @@ export const getPublicListings = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    console.error("public listings error: ", error)
     res.status(500).json({ message: 'Error fetching public listings' });
   }
 };

@@ -41,11 +41,35 @@ export const createBlog = async (req: Request, res: Response) => {
 
 export const getBlogs = async (req: Request, res: Response) => {
   try {
+    const { authorId, categoryId, recent } = req.query;
+    const where: any = {};
+    const orderBy: any = {};
+
+    if (authorId && authorId !== 'undefined') {
+      where.author_id = String(authorId);
+    }
+
+    if (categoryId && categoryId !== 'undefined') {
+      where.listing = {
+        category_id: String(categoryId),
+      };
+    }
+
+    if (recent === 'true') {
+      orderBy.published_date = 'desc';
+    }
+
     const blogs = await prisma.blog.findMany({
+      where,
       include: {
-        listing: true,
+        listing: {
+          include: {
+            category: true,
+          },
+        },
         author: true,
       },
+      orderBy,
     });
     res.json(blogs);
   } catch (error) {

@@ -3,11 +3,12 @@ import api from '../api';
 import { BlogPost } from '../lib/types';
 import { CreateBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 
-export const useGetBlogs = () => {
+export const useGetBlogs = (params?: { authorId?: string; categoryId?: string; recent?: boolean }) => {
   return useQuery<BlogPost[], Error>({
-    queryKey: ['blogs'],
+    queryKey: ['blogs', params],
     queryFn: async () => {
-      const response = await api.get<BlogPost[]>('/blogs');
+      const queryString = new URLSearchParams(params as Record<string, string>).toString();
+      const response = await api.get<BlogPost[]>(`/blogs?${queryString}`);
       return response.data;
     },
   });

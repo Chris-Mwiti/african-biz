@@ -3,11 +3,12 @@ import api from '../api';
 import { Event } from '../lib/types';
 import { CreateEventDto, UpdateEventDto } from '../dto/event.dto';
 
-export const useGetEvents = () => {
+export const useGetEvents = (params?: { startDate?: string; endDate?: string }) => {
   return useQuery<Event[], Error>({
-    queryKey: ['events'],
+    queryKey: ['events', params],
     queryFn: async () => {
-      const response = await api.get<Event[]>('/events');
+      const queryString = new URLSearchParams(params as Record<string, string>).toString();
+      const response = await api.get<Event[]>(`/events?${queryString}`);
       return response.data;
     },
   });

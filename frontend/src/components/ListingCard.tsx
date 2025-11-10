@@ -14,6 +14,7 @@ interface ListingCardProps {
 export function ListingCard({ listing, variant = 'default' }: ListingCardProps) {
   const isFeatured = variant === 'featured' || listing.is_premium;
   const isCompact = variant === 'compact';
+  console.log(listing.images)
 
   return (
     <Card className={`group overflow-hidden transition-all hover:shadow-lg ${

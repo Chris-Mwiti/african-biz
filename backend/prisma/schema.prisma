@@ -82,6 +82,8 @@ model Event {
   creator_id      String
   creator         User          @relation(fields: [creator_id], references: [id])
   approval_status ApprovalStatus @default(PENDING)
+
+  @@index([start_datetime, end_datetime])
 }
 
 model Blog {
@@ -97,6 +99,8 @@ model Blog {
   author          User          @relation(fields: [author_id], references: [id])
   approval_status ApprovalStatus @default(PENDING)
   published_date  DateTime?
+
+  @@index([author_id])
 }
 
 model Subscription {

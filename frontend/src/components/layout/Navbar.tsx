@@ -169,7 +169,7 @@ export function Navbar({ onSearch }: NavbarProps) {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 z-50 bg-foreground">
+                  <DropdownMenuContent align="end" className="w-56 z-[100] bg-background">
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
                         <p className="leading-none">

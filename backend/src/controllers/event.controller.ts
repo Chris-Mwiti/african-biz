@@ -37,14 +37,26 @@ export const createEvent = async (req: Request, res: Response) => {
 
     res.status(201).json(event);
   } catch (error) {
-    console.error(error)
+    console.error("listing error: ", error)
     res.status(500).json({ message: 'Error creating event' });
   }
 };
 
 export const getEvents = async (req: Request, res: Response) => {
   try {
+    const { startDate, endDate } = req.query;
+    const where: any = {};
+
+    if (startDate && startDate !== 'undefined') {
+      where.start_datetime = { gte: new Date(String(startDate)) };
+    }
+
+    if (endDate && endDate !== 'undefined') {
+      where.end_datetime = { lte: new Date(String(endDate)) };
+    }
+
     const events = await prisma.event.findMany({
+      where,
       include: {
         listing: true,
         creator: true,
@@ -52,6 +64,7 @@ export const getEvents = async (req: Request, res: Response) => {
     });
     res.json(events);
   } catch (error) {
+    console.error("events error: ", error)
     res.status(500).json({ message: 'Error fetching events' });
   }
 };
@@ -71,6 +84,7 @@ export const getEventById = async (req: Request, res: Response) => {
     }
     res.json(event);
   } catch (error) {
+    console.log("get event: ", error)
     res.status(500).json({ message: 'Error fetching event' });
   }
 };
@@ -86,6 +100,7 @@ export const updateEvent = async (req: Request, res: Response) => {
     });
     res.json(updatedEvent);
   } catch (error) {
+    console.error("update event: ", error)
     res.status(500).json({ message: 'Error updating event' });
   }
 };
@@ -99,6 +114,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
     });
     res.status(204).send();
   } catch (error) {
+    console.error("delete error: ", error)
     res.status(500).json({ message: 'Error deleting event' });
   }
 };

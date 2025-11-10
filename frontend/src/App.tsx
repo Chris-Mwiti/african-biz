@@ -25,6 +25,7 @@ import { EditBlog } from './pages/dashboard/EditBlog'; // Updated import path
 import { UserBlogs } from './pages/UserBlogs'; // New import
 import { Analytics } from './pages/dashboard/Analytics';
 import { Account } from './pages/dashboard/Account';
+import { AdminCreateListing } from './pages/admin/CreateListing';
 import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminOverview } from './pages/admin/AdminOverview';
 import { PendingApprovals } from './pages/admin/PendingApprovals';
@@ -90,7 +91,7 @@ function App() {
             }
           />
           <Route
-            path="/events/:id"
+            path="/event/:id"
             element={
               <>
                 <Navbar />
@@ -114,7 +115,7 @@ function App() {
             }
           />
           <Route
-            path="/blogs/:id"
+            path="/blog/:id"
             element={
               <>
                 <Navbar />
@@ -188,6 +189,7 @@ function App() {
             }
           >
             <Route index element={<AdminOverview />} />
+            <Route path="new-listing" element={<AdminCreateListing />} />
             <Route path="pending" element={<PendingApprovals />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="categories" element={<ManageCategories />} />

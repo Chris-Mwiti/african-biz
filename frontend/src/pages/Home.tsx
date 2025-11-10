@@ -74,7 +74,7 @@ export function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl text-center">
+          <div className="mx-auto max-w-5xl text-center space-y-3">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm border border-white/20">
               <Star className="h-4 w-4 text-secondary fill-secondary" />
               <span className="text-sm font-medium text-white">

@@ -16,6 +16,7 @@ import {
   User,
   Activity,
   TrendingUp,
+  PlusSquare,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../../components/ui/utils';
@@ -38,6 +39,7 @@ const navigation = [
   { name: 'Pending Approvals', href: '/admin/pending', icon: CheckCircle2, badge: 0 }, // Default badge to 0
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Categories', href: '/admin/categories', icon: Settings },
+  { name: 'Create Listing', href: '/admin/new-listing', icon: PlusSquare },
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Blog Posts', href: '/admin/blogs', icon: FileText },
   { name: 'Content Moderation', href: '/admin/moderation', icon: Shield },
