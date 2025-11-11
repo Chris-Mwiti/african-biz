@@ -53,6 +53,9 @@ export function BlogDetail() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-wrap items-center gap-3 text-muted-foreground" style={{ fontSize: '12px' }}>
+                <div className='w-full'>
+                  <img src={blog.banner_image}  alt='Banner Image' className='w-full rounded-lg'/> 
+                </div>
                 <div className="flex items-center gap-1">
                   <User className="h-3.5 w-3.5" />
                   <span>{blog.author.name}</span>

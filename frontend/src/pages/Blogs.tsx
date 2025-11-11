@@ -74,9 +74,11 @@ export function Blogs() {
         ) : error ? (
           <p>Error fetching blog posts.</p>
         ) : blogs && blogs.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {blogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+          <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-3">
+            {blogs.map((blog, index) => (
+              <div key={blog.id} className={index === 0 ? 'lg:col-span-2' : ''}>
+                <BlogCard blog={blog} />
+              </div>
             ))}
           </div>
         ) : (

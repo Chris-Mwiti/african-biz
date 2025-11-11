@@ -78,7 +78,7 @@ export function ListingDetail() {
             <div className="mb-6 overflow-hidden rounded-lg">
               {listing.images && listing.images.length > 0 ? (
                 <div className="grid gap-2">
-                  <div className="relative h-96 w-full overflow-hidden rounded-lg bg-muted">
+                  <div className="relative h-114 w-full  overflow-hidden rounded-lg bg-muted">
                     <ImageWithFallback
                       src={listing.images[0]}
                       alt={listing.title}

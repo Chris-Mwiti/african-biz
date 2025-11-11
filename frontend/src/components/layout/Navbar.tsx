@@ -51,10 +51,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2 shrink-0 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm transition-transform group-hover:scale-105">
-              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#F9A826"/>
-                <path d="M2 17L12 22L22 17V12L12 17L2 12V17Z" fill="#0B3D91"/>
-              </svg>
+              <img src='../../../assets/african-yellow-pages/apple-icon-76x76.png' />
             </div>
             <div className="hidden flex-col sm:flex">
               <span className="font-semibold leading-tight text-secondary-foreground transition-colors group-hover:text-primary">
@@ -169,7 +166,7 @@ export function Navbar({ onSearch }: NavbarProps) {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 z-[100] bg-background">
+                  <DropdownMenuContent align="start" className="w-56 z-[100] bg-background border border-2">
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
                         <p className="leading-none">
@@ -178,7 +175,7 @@ export function Navbar({ onSearch }: NavbarProps) {
                         <p className="text-xs leading-none text-muted-foreground">
                           {user?.email}
                         </p>
-                        {user?.role === 'premium' && (
+                        {user?.role === Role.PREMIUM && (
                           <Badge variant="secondary" className="mt-1 w-fit text-xs">
                             Premium
                           </Badge>
@@ -200,7 +197,7 @@ export function Navbar({ onSearch }: NavbarProps) {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    {user?.role !== 'admin' && (
+                    {user?.role !== Role.ADMIN && (
                       <DropdownMenuItem asChild>
                         <Link to={ROUTES.DASHBOARD_SETTINGS}>
                           <Settings className="mr-2 h-4 w-4" />
@@ -314,7 +311,7 @@ export function Navbar({ onSearch }: NavbarProps) {
               ) : (
                 <>
                   <div className="my-2 h-px bg-border" />
-                  {user?.role !== 'admin' && (
+                  {user?.role !== Role.ADMIN && (
                     <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)}>
                       <Link to={ROUTES.DASHBOARD_NEW_LISTING}>
                         <Plus className="mr-2 h-4 w-4" />
@@ -329,13 +326,13 @@ export function Navbar({ onSearch }: NavbarProps) {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Link
-                      to={user?.role === 'admin' ? ROUTES.ADMIN : ROUTES.DASHBOARD}
+                      to={user?.role === Role.ADMIN ? ROUTES.ADMIN : ROUTES.DASHBOARD}
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
                     </Link>
                   </Button>
-                  {user?.role !== 'admin' && (
+                  {user?.role !== Role.ADMIN && (
                     <Button
                       asChild
                       variant="outline"
