@@ -51,7 +51,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2 shrink-0 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm transition-transform group-hover:scale-105">
-              <img src='../../../assets/african-yellow-pages/apple-icon-76x76.png' />
+              <img src="assets/african-yellow-pages/apple-icon-76x76.png" />
             </div>
             <div className="hidden flex-col sm:flex">
               <span className="font-semibold leading-tight text-secondary-foreground transition-colors group-hover:text-primary">
