@@ -10,7 +10,8 @@ import { Textarea } from '../../components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CloudinaryUploadWidget from '../../components/CloudinaryUploadWidget';
 
 const updateBlogSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -27,6 +28,7 @@ export function EditBlog() {
   const { data: blog, isLoading: isLoadingBlog } = useGetBlog(id!);
   const { data: listings, isLoading: isLoadingListings } = useGetMyListings();
   const updateBlogMutation = useUpdateBlog(id!);
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof updateBlogSchema>>({
     resolver: zodResolver(updateBlogSchema),
@@ -42,6 +44,7 @@ export function EditBlog() {
         tags: blog.tags?.join(', '),
         listing_id: blog.listing_id,
       });
+      setBannerImage(blog.banner_image);
     }
   }, [blog, form]);
 
@@ -49,6 +52,7 @@ export function EditBlog() {
     const formattedValues = {
       ...values,
       tags: values.tags ? values.tags.split(',').map(tag => tag.trim()) : [],
+      banner_image: bannerImage || '',
     };
     updateBlogMutation.mutate(formattedValues as any, {
       onSuccess: () => {
@@ -137,19 +141,23 @@ export function EditBlog() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="banner_image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Banner Image URL (Optional)</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://example.com/image.jpg" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <FormItem>
+            <FormLabel>Banner Image</FormLabel>
+            <FormControl>
+              <CloudinaryUploadWidget
+                onUploadSuccess={(url) => setBannerImage(url)}
+                cloudName={import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || ''}
+                uploadPreset={import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || ''}
+                buttonText="Upload Banner Image"
+              />
+            </FormControl>
+            {bannerImage && (
+              <div className="mt-4">
+                <img src={bannerImage} alt="Banner" className="w-full h-auto rounded-md" />
+              </div>
             )}
-          />
+            <FormMessage />
+          </FormItem>
           <FormField
             control={form.control}
             name="tags"

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -21,7 +21,6 @@ import {
 import { Badge } from './ui/badge';
 import { CATEGORIES, COUNTRIES } from '../lib/mockData';
 import { useSearchListings } from '../services/listing.service';
-import { Listing } from '../lib/types';
 import { Link } from 'react-router-dom';
 
 interface SearchBarProps {
@@ -96,7 +95,7 @@ export function SearchBar({ onSearch, showFilters = true }: SearchBarProps) {
             value={filters.query}
             onChange={(e) => setFilters((prev) => ({ ...prev, query: e.target.value }))}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            className="h-12 pl-10 pr-4"
+            className="h-12 pl-10 pr-4 text-foreground"
           />
           {filters.query.length > 2 && (
             <div className="absolute left-0 right-0 top-14 z-10 rounded-md border bg-popover p-2 text-popover-foreground shadow-md">

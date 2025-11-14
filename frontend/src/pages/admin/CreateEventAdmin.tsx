@@ -25,7 +25,7 @@ const createEventSchema = z.object({
 
 type CreateEventFormValues = z.infer<typeof createEventSchema>;
 
-export function CreateEvent() {
+export function CreateEventAdmin() {
   const navigate = useNavigate();
   const createEventMutation = useCreateEvent();
   const { data: listings, isLoading: isLoadingListings } = useGetMyListings();
@@ -58,7 +58,7 @@ export function CreateEvent() {
     createEventMutation.mutate(values, {
       onSuccess: () => {
         toast.success('Event created successfully!');
-        navigate('/dashboard/events');
+        navigate('/admin/events');
       },
       onError: (error) => {
         toast.error(error.message || 'Failed to create event.');

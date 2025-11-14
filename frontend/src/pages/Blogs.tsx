@@ -33,7 +33,7 @@ export function Blogs() {
         title="Blog Posts"
         description="Read the latest stories, tips, and insights from our community"
       />
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Search and Filter Section */}
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Input
@@ -51,24 +51,6 @@ export function Blogs() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4">Filter by Category</h3>
-          {isLoadingCategories ? (
-            <p>Loading categories...</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {categories?.map((category) => (
-                <CategoryTagCard
-                  key={category.id}
-                  category={category}
-                  isSelected={selectedCategory === category.id}
-                  onClick={() => handleCategorySelect(category.id)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
         {isLoading ? (
           <p>Loading blog posts...</p>
         ) : error ? (
@@ -84,6 +66,23 @@ export function Blogs() {
         ) : (
           <p>No blog posts found matching your criteria.</p>
         )}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4">Filter by Category</h3>
+          {isLoadingCategories ? (
+            <p>Loading categories...</p>
+          ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {categories?.map((category) => (
+                  <CategoryTagCard
+                    key={category.id}
+                    category={category}
+                    isSelected={selectedCategory === category.id}
+                    onClick={() => handleCategorySelect(category.id)}
+                  />
+                ))}
+              </div>
+            )}
+        </div>
       </div>
     </div>
   );

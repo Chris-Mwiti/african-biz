@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Event } from '../lib/types';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import LazyImage from './ui/LazyImage';
 
 interface EventCardProps {
   event: Event;
@@ -34,10 +34,11 @@ export function EventCard({ event }: EventCardProps) {
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <Link to={`/event/${event.id}`}>
         <div className="relative h-48 overflow-hidden bg-muted">
-          <ImageWithFallback
+          <LazyImage
             src={event.banner_image}
             alt={event.title}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            placeholderSrc="https://via.placeholder.com/400x200"
           />
           <div className="absolute left-3 top-3">
             <Badge className="bg-primary text-primary-foreground">Event</Badge>
@@ -49,7 +50,7 @@ export function EventCard({ event }: EventCardProps) {
         <Link to={`/event/${event.id}`}>
           {/* Business Name */}
           <p className="mb-2 text-muted-foreground" style={{ fontSize: '12px' }}>
-            {event.listing_title}
+            {event.listing.title}
           </p>
 
           {/* Title */}

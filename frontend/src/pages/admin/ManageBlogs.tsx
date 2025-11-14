@@ -55,13 +55,11 @@ const blogFormSchema = z.object({
 type BlogFormValues = z.infer<typeof blogFormSchema>;
 
 export function ManageBlogs() {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const { data: blogs, isLoading, isError, error } = useGetBlogs();
-  const createBlogMutation = useCreateBlog();
   const updateBlogMutation = useUpdateBlog(selectedBlog?.id || '');
   const deleteBlogMutation = useDeleteBlog();
 
@@ -75,42 +73,6 @@ export function ManageBlogs() {
       tags: '',
     },
   });
-
-  useEffect(() => {
-    if (selectedBlog) {
-      form.reset({
-        title: selectedBlog.title,
-        excerpt: selectedBlog.excerpt,
-        content: selectedBlog.content,
-        banner_image: selectedBlog.banner_image || '',
-        tags: selectedBlog.tags.join(', ') || '',
-      });
-    } else {
-      form.reset({
-        title: '',
-        excerpt: '',
-        content: '',
-        banner_image: '',
-        tags: '',
-      });
-    }
-  }, [selectedBlog, form]);
-
-  const handleCreateSubmit = (values: BlogFormValues) => {
-    createBlogMutation.mutate({
-      ...values,
-      tags: values.tags ? values.tags.split(', ').map(tag => tag.trim()) : [],
-    } as CreateBlogDto, {
-      onSuccess: () => {
-        toast.success('Blog post created successfully!');
-        setIsCreateOpen(false);
-        form.reset();
-      },
-      onError: (err) => {
-        toast.error(`Failed to create blog: ${err.message}`);
-      },
-    });
-  };
 
   const handleEditSubmit = (values: BlogFormValues) => {
     if (!selectedBlog) return;
@@ -158,23 +120,12 @@ export function ManageBlogs() {
             Create, edit, and manage blog posts
           </p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Blog Post
+        <Button asChild>
+              <Link to="/admin/create-blog">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Blog Post
+              </Link>
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New Blog Post</DialogTitle>
-              <DialogDescription>
-                Add a new blog post to the platform
-              </DialogDescription>
-            </DialogHeader>
-            <CreateBlog />
-           </DialogContent>
-        </Dialog>
       </div>
 
       {/* Stats */}

@@ -3,20 +3,20 @@ import { useGetEvents } from '../services/event.service';
 import { EventCard } from '../components/EventCard';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import { Menu } from '@headlessui/react';
 
 import { cn } from '../utils/cn';
 import { Button } from '../components/ui/button';
 import { Calendar } from '../components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { HeroSection } from '../components/layout/HeroSection';
+import { DateRange } from 'react-day-picker';
 
 export function Events() {
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
   const { data: events, isLoading, error } = useGetEvents({
-    startDate: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
-    endDate: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
+    startDate: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined,
+    endDate: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined,
   });
 
   return (
@@ -28,57 +28,41 @@ export function Events() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Date Filter Section */}
         <div className="mb-8 flex flex-col sm:flex-row gap-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'outline'}
-                className={cn(
-                  'w-[280px] justify-start text-left font-normal',
-                  !startDate && 'text-muted-foreground'
-                )}
-              >
+          <Menu as="div" className="relative inline-block text-left">
+            <div>
+              <Menu.Button as={Button} variant={'outline'} className={cn(
+                'w-[280px] justify-start text-left font-normal',
+                !dateRange && 'text-muted-foreground'
+              )}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, 'PPP') : <span>Pick a start date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'outline'}
-                className={cn(
-                  'w-[280px] justify-start text-left font-normal',
-                  !endDate && 'text-muted-foreground'
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, 'LLL dd, y')} -{' '}
+                      {format(dateRange.to, 'LLL dd, y')}
+                    </>
+                  ) : (
+                    format(dateRange.from, 'LLL dd, y')
+                  )
+                ) : (
+                  <span>Pick a date range</span>
                 )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, 'PPP') : <span>Pick an end date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+              </Menu.Button>
+            </div>
+            <Menu.Items className="absolute right-0 mt-2 w-auto origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
               <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
                 initialFocus
+                mode="range"
+                defaultMonth={dateRange?.from}
+                selected={dateRange}
+                onSelect={setDateRange}
+                numberOfMonths={2}
               />
-            </PopoverContent>
-          </Popover>
+            </Menu.Items>
+          </Menu>
 
-          {(startDate || endDate) && (
-            <Button variant="outline" onClick={() => {
-              setStartDate(undefined);
-              setEndDate(undefined);
-            }}>
+          {(dateRange?.from || dateRange?.to) && (
+            <Button variant="outline" onClick={() => setDateRange(undefined)}>
               Clear Dates
             </Button>
           )}

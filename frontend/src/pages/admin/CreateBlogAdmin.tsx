@@ -1,45 +1,43 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useCreateEvent } from '../../services/event.service';
+import { useCreateBlog } from '../../services/blog.service';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
 import { useGetMyListings } from '../../services/listing.service';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import CloudinaryUploadWidget from '../../components/CloudinaryUploadWidget';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import CloudinaryUploadWidget from '../../components/CloudinaryUploadWidget';
 import { X } from 'lucide-react';
 
-const createEventSchema = z.object({
+const createBlogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
-  start_datetime: z.string().min(1, 'Start date is required'),
-  end_datetime: z.string().min(1, 'End date is required'),
-  location: z.string().min(1, 'Location is required'),
-  listing_id: z.string().min(1, 'Listing is required'),
+  content: z.string().min(1, 'Content is required'),
+  excerpt: z.string().min(1, 'Excerpt is required'),
   banner_image: z.string().optional(),
+  tags: z.string().optional(), // Will be split by comma
+  listing_id: z.string().min(1, 'Listing is required'),
 });
 
-type CreateEventFormValues = z.infer<typeof createEventSchema>;
+type CreateBlogFormValues = z.infer<typeof createBlogSchema>;
 
-export function CreateEvent() {
+export function CreateBlogAdmin() {
   const navigate = useNavigate();
-  const createEventMutation = useCreateEvent();
+  const createBlogMutation = useCreateBlog();
   const { data: listings, isLoading: isLoadingListings } = useGetMyListings();
 
-  const form = useForm<CreateEventFormValues>({
-    resolver: zodResolver(createEventSchema),
+  const form = useForm<CreateBlogFormValues>({
+    resolver: zodResolver(createBlogSchema),
     defaultValues: {
       title: '',
-      description: '',
-      start_datetime: '',
-      end_datetime: '',
-      location: '',
-      listing_id: '',
+      content: '',
+      excerpt: '',
       banner_image: '',
+      tags: '',
+      listing_id: '',
     },
   });
 
@@ -54,21 +52,25 @@ export function CreateEvent() {
     setValue('banner_image', '', { shouldValidate: true });
   };
 
-  const handleFormSubmit = (values: CreateEventFormValues) => {
-    createEventMutation.mutate(values, {
+  const handleFormSubmit = (values: CreateBlogFormValues) => {
+    const formattedValues = {
+      ...values,
+      tags: values.tags ? values.tags.split(',').map(tag => tag.trim()) : [],
+    };
+    createBlogMutation.mutate(formattedValues as any, {
       onSuccess: () => {
-        toast.success('Event created successfully!');
-        navigate('/dashboard/events');
+        toast.success('Blog post created successfully!');
+        navigate('/admin/blogs');
       },
       onError: (error) => {
-        toast.error(error.message || 'Failed to create event.');
+        toast.error(error.message || 'Failed to create blog post.');
       },
     });
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Create Event</h1>
+      <h1 className="text-2xl font-bold mb-4">Create New Blog Post</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
           <FormField
@@ -76,7 +78,7 @@ export function CreateEvent() {
             name="listing_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Listing</FormLabel>
+                <FormLabel>Associated Listing</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -86,8 +88,7 @@ export function CreateEvent() {
                   <SelectContent>
                     {isLoadingListings ? (
                       <SelectItem value="loading" disabled>Loading...</SelectItem>
-                    ) : (
-                      listings?.map((listing) => (
+                    ) : (listings?.map((listing) => (
                         <SelectItem key={listing.id} value={listing.id}>
                           {listing.title}
                         </SelectItem>
@@ -106,7 +107,7 @@ export function CreateEvent() {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Event Title" {...field} />
+                  <Input placeholder="Blog Post Title" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,12 +115,12 @@ export function CreateEvent() {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="excerpt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Excerpt</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Event Description" {...field} />
+                  <Textarea placeholder="A short summary of your blog post" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,38 +128,12 @@ export function CreateEvent() {
           />
           <FormField
             control={form.control}
-            name="start_datetime"
+            name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date and Time</FormLabel>
+                <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="end_datetime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>End Date and Time</FormLabel>
-                <FormControl>
-                  <Input type="datetime-local" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Location</FormLabel>
-                <FormControl>
-                  <Input placeholder="Event Location" {...field} />
+                  <Textarea placeholder="Write your blog post content here..." rows={10} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -171,7 +146,7 @@ export function CreateEvent() {
               <FormItem>
                 <FormLabel>Banner Image</FormLabel>
                 <p className="text-sm text-muted-foreground">
-                  Add a banner image for your event.
+                  Add a banner image for your blog post.
                 </p>
                 <FormControl>
                   <div className="grid gap-4 sm:grid-cols-3">
@@ -199,8 +174,21 @@ export function CreateEvent() {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={createEventMutation.isPending}>
-            {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
+          <FormField
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tags (Comma-separated)</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., business, marketing, diaspora" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={createBlogMutation.isPending}>
+            {createBlogMutation.isPending ? 'Creating...' : 'Create Blog Post'}
           </Button>
         </form>
       </Form>

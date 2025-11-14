@@ -10,27 +10,20 @@ import {
   Calendar,
   FileText,
   LogOut,
-  Menu,
   X,
   Bell,
   User,
   Activity,
   TrendingUp,
   PlusSquare,
+  MenuIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../../components/ui/utils';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
+import { Menu } from '@headlessui/react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGetAdminOverviewStats } from '../../services/admin.service';
 
@@ -39,9 +32,12 @@ const navigation = [
   { name: 'Pending Approvals', href: '/admin/pending', icon: CheckCircle2, badge: 0 }, // Default badge to 0
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Categories', href: '/admin/categories', icon: Settings },
+  { name: 'Manage Listings', href: '/admin/listings', icon: Star },
   { name: 'Create Listing', href: '/admin/new-listing', icon: PlusSquare },
-  { name: 'Events', href: '/admin/events', icon: Calendar },
-  { name: 'Blog Posts', href: '/admin/blogs', icon: FileText },
+  { name: 'Manage Events', href: '/admin/events', icon: Calendar },
+  { name: 'Create Event', href: '/admin/create-event', icon: PlusSquare },
+  { name: 'Manage Blog Posts', href: '/admin/blogs', icon: FileText },
+  { name: 'Create Blog Post', href: '/admin/create-blog', icon: PlusSquare },
   { name: 'Content Moderation', href: '/admin/moderation', icon: Shield },
   { name: 'Featured Listings', href: '/admin/featured', icon: Star },
   { name: 'Payments', href: '/admin/payments', icon: CreditCard },
@@ -208,7 +204,7 @@ export function AdminLayout() {
             className="lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu className="h-5 w-5" />
+            <MenuIcon className="h-5 w-5" />
           </Button>
 
           <div className="flex-1">
@@ -228,43 +224,68 @@ export function AdminLayout() {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent" />
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+            <Menu as="div" className="relative inline-block text-left">
+              <div>
+                <Menu.Button as={Button} variant="ghost" size="icon">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {user.name.charAt(0).toUpperCase()}{user.name.charAt(1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm">{user.name}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                </Menu.Button>
+              </div>
+              <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="px-1 py-1">
+                  <div className="px-2 py-2">
+                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
                   </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/admin/settings">
-                    <User className="mr-2 h-4 w-4" />
-                    Admin Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/">
-                    <Activity className="mr-2 h-4 w-4" />
-                    View Live Site
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </div>
+                <div className="px-1 py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to="/admin/settings"
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Admin Settings
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to="/"
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <Activity className="mr-2 h-4 w-4" />
+                        View Live Site
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+                <div className="px-1 py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={handleLogout}
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </button>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Menu>
           </div>
         </header>
 

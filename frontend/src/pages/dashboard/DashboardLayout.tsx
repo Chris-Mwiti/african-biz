@@ -9,26 +9,19 @@ import {
   CreditCard,
   Settings,
   LogOut,
-  Menu,
   X,
   Bell,
   User,
   Crown,
   FilePlus,
+  MenuIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../../components/ui/utils';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
+import { Menu, MenuButton } from '@headlessui/react';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockUser } from '../../lib/mockData';
 import { ROUTES } from '@/constants/routes';
@@ -184,7 +177,7 @@ export function DashboardLayout() {
             className="lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu className="h-5 w-5" />
+            <MenuIcon className="h-5 w-5" />
           </Button>
 
           <div className="flex-1" />
@@ -196,42 +189,67 @@ export function DashboardLayout() {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent" />
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+            <Menu as="div" className="relative inline-block text-left">
+              <div>
+                <Menu.Button as={Button} variant="ghost" size="icon">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={mockUser.profile_image} alt={mockUser.name} />
                     <AvatarFallback>{mockUser.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
+                </Menu.Button>
+              </div>
+              <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="px-1 py-1">
+                  <div className="px-2 py-2">
                     <p className="text-sm">{mockUser.name}</p>
                     <p className="text-xs text-muted-foreground">{mockUser.email}</p>
                   </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard/settings">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/pricing">
-                    <Crown className="mr-2 h-4 w-4" />
-                    Upgrade Plan
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </div>
+                <div className="px-1 py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to="/dashboard/settings"
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Profile Settings
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to="/pricing"
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <Crown className="mr-2 h-4 w-4" />
+                        Upgrade Plan
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+                <div className="px-1 py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={handleLogout}
+                        className={`${
+                          active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </button>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Menu>
           </div>
         </header>
 

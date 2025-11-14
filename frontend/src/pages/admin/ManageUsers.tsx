@@ -10,14 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
+import { Menu } from '@headlessui/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -257,47 +250,91 @@ export function ManageUsers() {
                     {new Date(user.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
+                    <Menu as="div" className="relative inline-block text-left">
+                      <div>
+                        <Menu.Button as={Button} variant="ghost" size="sm">
                           <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View Profile</DropdownMenuItem>
-                        <DropdownMenuItem>View Listings</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setStatusDialogOpen(true);
-                          }}
-                        >
-                          <Ban className="mr-2 h-4 w-4" />
-                          {user.status === UserStatus.ACTIVE ? 'Deactivate' : 'Activate'}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setRoleDialogOpen(true);
-                          }}
-                        >
-                          <Shield className="mr-2 h-4 w-4" />
-                          Change Role
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete User
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        </Menu.Button>
+                      </div>
+                      <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="px-1 py-1 ">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={`${
+                                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                View Profile
+                              </button>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={`${
+                                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                View Listings
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                        <div className="px-1 py-1">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setStatusDialogOpen(true);
+                                }}
+                                className={`${
+                                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                <Ban className="mr-2 h-4 w-4" />
+                                {user.status === UserStatus.ACTIVE ? 'Deactivate' : 'Activate'}
+                              </button>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setRoleDialogOpen(true);
+                                }}
+                                className={`${
+                                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                <Shield className="mr-2 h-4 w-4" />
+                                Change Role
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                        <div className="px-1 py-1">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setDeleteDialogOpen(true);
+                                }}
+                                className={`${
+                                  active ? 'bg-violet-500 text-white' : 'text-red-900'
+                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete User
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Menu>
                   </TableCell>
                 </TableRow>
               ))}

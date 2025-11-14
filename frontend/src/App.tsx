@@ -33,7 +33,11 @@ import { ManageEvents } from './pages/admin/ManageEvents';
 import { ManageBlogs } from './pages/admin/ManageBlogs';
 import { ManageUsers } from './pages/admin/ManageUsers';
 import { ManageCategories } from './pages/admin/ManageCategories';
+import { ManageListings } from './pages/admin/ManageListings';
 import { Role } from './dto/auth.dto';
+
+import { CreateEventAdmin } from './pages/admin/CreateEventAdmin';
+import { CreateBlogAdmin } from './pages/admin/CreateBlogAdmin';
 
 function App() {
   return (
@@ -193,8 +197,11 @@ function App() {
             <Route path="pending" element={<PendingApprovals />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="categories" element={<ManageCategories />} />
+            <Route path="listings" element={<ManageListings />} />
             <Route path="events" element={<ManageEvents />} />
+            <Route path="create-event" element={<CreateEventAdmin />} />
             <Route path="blogs" element={<ManageBlogs />} />
+            <Route path="create-blog" element={<CreateBlogAdmin />} />
             <Route path="moderation" element={
               <div className="flex min-h-screen items-center justify-center p-6">
                 <div className="text-center">

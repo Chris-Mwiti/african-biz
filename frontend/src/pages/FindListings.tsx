@@ -18,11 +18,7 @@ export function FindListings() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const searchQuery = searchParams.get('q') || '';
   const selectedCategoryId = searchParams.get('category');
-  const selectedCountry = searchParams.get('country');
-  const selectedCity = searchParams.get('city');
-  const selectedPremium = searchParams.get('premium');
 
   const { data, isLoading, error } = useGetPublicListings(page, 10, selectedCategoryId || undefined);
   const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useGetCategories();
@@ -84,23 +80,7 @@ export function FindListings() {
           {isLoadingCategories && <p>Loading categories...</p>}
           {isErrorCategories && <p className="text-red-500 text-sm">Error loading categories.</p>}
 
-          {categories && categories.length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {categories.map((category) => (
-                <Link key={category.id} to={`/find-listings?category=${category.id}`}>
-                  <Card className="transition-all hover:shadow-md hover:border-primary/50">
-                    <CardContent className="p-6 text-center">
-                      <h4 className="mb-1">{category.name}</h4>
-                      <p className="text-muted-foreground" style={{ fontSize: '14px' }}>
-                        Browse {category.name.toLowerCase()}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+       </div>
 
         {/* Results Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

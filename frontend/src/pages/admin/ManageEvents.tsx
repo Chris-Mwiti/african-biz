@@ -57,13 +57,11 @@ const eventFormSchema = z.object({
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export function ManageEvents() {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const { data: events, isLoading, isError, error } = useGetEvents();
-  const createEventMutation = useCreateEvent();
   const updateEventMutation = useUpdateEvent(selectedEvent?.id || '');
   const deleteEventMutation = useDeleteEvent();
 
@@ -79,42 +77,7 @@ export function ManageEvents() {
     },
   });
 
-  useEffect(() => {
-    if (selectedEvent) {
-      form.reset({
-        title: selectedEvent.title,
-        description: selectedEvent.description,
-        start_datetime: selectedEvent.start_datetime.slice(0, 16), // Format for datetime-local input
-        end_datetime: selectedEvent.end_datetime.slice(0, 16),   // Format for datetime-local input
-        location: selectedEvent.location,
-        banner_image: selectedEvent.banner_image || '',
-      });
-    } else {
-      form.reset({
-        title: '',
-        description: '',
-        start_datetime: '',
-        end_datetime: '',
-        location: '',
-        banner_image: '',
-      });
-    }
-  }, [selectedEvent, form]);
-
-  const handleCreateSubmit = (values: EventFormValues) => {
-    createEventMutation.mutate(values as CreateEventDto, {
-      onSuccess: () => {
-        toast.success('Event created successfully!');
-        setIsCreateOpen(false);
-        form.reset();
-      },
-      onError: (err) => {
-        toast.error(`Failed to create event: ${err.message}`);
-      },
-    });
-  };
-
-  const handleEditSubmit = (values: EventFormValues) => {
+    const handleEditSubmit = (values: EventFormValues) => {
     if (!selectedEvent) return;
     updateEventMutation.mutate(values as UpdateEventDto, {
       onSuccess: () => {
@@ -158,23 +121,12 @@ export function ManageEvents() {
             Create, edit, and manage community events
           </p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Event
+        <Button asChild>
+              <Link to="/admin/create-event">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Event
+              </Link>
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Create New Event</DialogTitle>
-              <DialogDescription>
-                Add a new event to the platform
-              </DialogDescription>
-            </DialogHeader>
-            <CreateEvent />
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* Stats */}

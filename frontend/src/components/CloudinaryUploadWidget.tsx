@@ -30,6 +30,10 @@ const CloudinaryUploadWidget: React.FC<CloudinaryUploadWidgetProps> = ({
         uploadPreset: uploadPreset,
         sources: ['local', 'url', 'camera'], // Customize upload sources
         multiple: false, // Allow single image upload for now
+        transformation: [
+          { width: 800, height: 600, crop: 'limit' },
+          { quality: 'auto' }
+        ],
         // Add more options as needed, e.g., cropping, transformations
       },
       (error: any, result: any) => {
@@ -51,7 +55,7 @@ const CloudinaryUploadWidget: React.FC<CloudinaryUploadWidgetProps> = ({
   };
 
   return (
-    <button type="button" onClick={showWidget} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+    <button type="button" onClick={showWidget} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 z-50">
       {buttonText}
     </button>
   );

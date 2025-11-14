@@ -4290,7 +4290,7 @@
   --foreground: var(--db-neutral-dark);
   --card: #fff;
   --card-foreground: var(--db-neutral-dark);
-  --popover: #fff;
+  --popover: var(--db-neutral-lighter);
   --popover-foreground: var(--db-neutral-dark);
   --primary: var(--db-primary);
   --primary-foreground: #fff;

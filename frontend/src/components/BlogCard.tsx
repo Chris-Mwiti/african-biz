@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { BlogPost } from '../lib/types';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import LazyImage from './ui/LazyImage';
 
 interface BlogCardProps {
   blog: BlogPost;
@@ -21,16 +21,15 @@ export function BlogCard({ blog }: BlogCardProps) {
     });
   };
 
-  console.log("blog card: ", blog)
-
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <Link to={`/blog/${blog.id}`}>
         <div className="relative h-48 overflow-hidden bg-muted">
-          <ImageWithFallback
+          <LazyImage
             src={blog.banner_image}
             alt={blog.title}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            placeholderSrc="https://via.placeholder.com/400x200"
           />
         </div>
       </Link>

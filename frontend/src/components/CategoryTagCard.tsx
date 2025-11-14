@@ -24,7 +24,7 @@ export function CategoryTagCard({ category, isSelected, onClick }: CategoryTagCa
     <Card
       className={cn(
         'cursor-pointer transition-all hover:shadow-md',
-        isSelected ? 'bg-primary text-primary-foreground' : 'bg-secondary'
+        isSelected ? 'bg-primary text-primary-foreground' : 'bg-white'
       )}
       onClick={onClick}
     >

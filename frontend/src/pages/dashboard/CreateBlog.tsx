@@ -10,6 +10,8 @@ import { useGetMyListings } from '../../services/listing.service';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import CloudinaryUploadWidget from '../../components/CloudinaryUploadWidget';
+import { X } from 'lucide-react';
 
 const createBlogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -20,12 +22,14 @@ const createBlogSchema = z.object({
   listing_id: z.string().min(1, 'Listing is required'),
 });
 
+type CreateBlogFormValues = z.infer<typeof createBlogSchema>;
+
 export function CreateBlog() {
   const navigate = useNavigate();
   const createBlogMutation = useCreateBlog();
   const { data: listings, isLoading: isLoadingListings } = useGetMyListings();
 
-  const form = useForm<z.infer<typeof createBlogSchema>>({
+  const form = useForm<CreateBlogFormValues>({
     resolver: zodResolver(createBlogSchema),
     defaultValues: {
       title: '',
@@ -37,7 +41,18 @@ export function CreateBlog() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createBlogSchema>) => {
+  const { watch, setValue } = form;
+
+  const handleCloudinaryUploadSuccess = (imageUrl: string) => {
+    setValue('banner_image', imageUrl, { shouldValidate: true });
+    toast.success('Image uploaded successfully!');
+  };
+
+  const removeImage = () => {
+    setValue('banner_image', '', { shouldValidate: true });
+  };
+
+  const handleFormSubmit = (values: CreateBlogFormValues) => {
     const formattedValues = {
       ...values,
       tags: values.tags ? values.tags.split(',').map(tag => tag.trim()) : [],
@@ -45,7 +60,7 @@ export function CreateBlog() {
     createBlogMutation.mutate(formattedValues as any, {
       onSuccess: () => {
         toast.success('Blog post created successfully!');
-        navigate('/dashboard/blogs');
+        navigate('/dashboard/my-blogs');
       },
       onError: (error) => {
         toast.error(error.message || 'Failed to create blog post.');
@@ -57,7 +72,7 @@ export function CreateBlog() {
     <div>
       <h1 className="text-2xl font-bold mb-4">Create New Blog Post</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="listing_id"
@@ -73,8 +88,7 @@ export function CreateBlog() {
                   <SelectContent>
                     {isLoadingListings ? (
                       <SelectItem value="loading" disabled>Loading...</SelectItem>
-                    ) : (
-                      listings?.map((listing) => (
+                    ) : (listings?.map((listing) => (
                         <SelectItem key={listing.id} value={listing.id}>
                           {listing.title}
                         </SelectItem>
@@ -128,11 +142,33 @@ export function CreateBlog() {
           <FormField
             control={form.control}
             name="banner_image"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
-                <FormLabel>Banner Image URL (Optional)</FormLabel>
+                <FormLabel>Banner Image</FormLabel>
+                <p className="text-sm text-muted-foreground">
+                  Add a banner image for your blog post.
+                </p>
                 <FormControl>
-                  <Input placeholder="https://example.com/image.jpg" {...field} />
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {watch('banner_image') && (
+                      <div className="relative aspect-video overflow-hidden rounded-lg border">
+                        <img src={watch('banner_image')} alt="Banner" className="h-full w-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removeImage()}
+                          className="absolute right-2 top-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+                    <CloudinaryUploadWidget
+                      onUploadSuccess={handleCloudinaryUploadSuccess}
+                      cloudName={import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || ''}
+                      uploadPreset={import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || ''}
+                      buttonText="Upload Banner Image"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
