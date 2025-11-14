@@ -149,7 +149,7 @@ model Review {
 model ListingAnalyticEvent {
   id         String            @id @default(uuid())
   listing_id String
-  listing    Listing           @relation(fields: [listing_id], references: [id])
+  listing    Listing           @relation(fields: [listing_id], references: [id], onDelete: Cascade)
   user_id    String?           // Optional, if user is logged in
   user       User?             @relation(fields: [user_id], references: [id])
   event_type AnalyticEventType

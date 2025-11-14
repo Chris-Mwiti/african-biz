@@ -10,7 +10,7 @@ export const getAdminOverviewStats = async (req: Request, res: Response) => {
     const premiumMembers = await prisma.user.count({ where: { role: Role.PREMIUM } });
     const basicMembers = await prisma.user.count({ where: { role: Role.MEMBER } }); // Assuming 'MEMBER' is basic
      const totalListings = await prisma.listing.count();
-    const pendingListings = await prisma.listing.count({ where: { status: ApprovalStatus.PENDING } });
+    const pendingListings = await prisma.listing.count({ where: { status: ListingStatus.PENDING } });
     const premiumListings = await prisma.listing.count({ where: { is_premium: true } });
     const verifiedListings = await prisma.listing.count({ where: { verified: true } });
 
@@ -76,6 +76,7 @@ export const getTopCategories = async (req: Request, res: Response) => {
       listingCount: cat._count.listings,
     })));
   } catch (error) {
+    console.error("error while fetching top categories: ", error)
     res.status(500).json({ message: 'Error fetching top categories', error });
   }
 };
@@ -127,6 +128,7 @@ export const getAdminUsers = async (req: Request, res: Response) => {
       totalPages: Math.ceil(total / Number(pageSize)),
     });
   } catch (error) {
+    console.error("error while fetching users: ", error)
     res.status(500).json({ message: 'Error fetching users', error });
   }
 };
@@ -227,10 +229,97 @@ export const rejectListing = async (req: Request, res: Response) => {
   try {
     const updatedListing = await prisma.listing.update({
       where: { id },
-      data: { status: ApprovalStatus.REJECTED },
+      data: { status: ListingStatus.REJECTED },
     });
     res.json(updatedListing);
   } catch (error) {
     res.status(500).json({ message: 'Error rejecting listing', error });
   }
 };
+
+export const getAdminListings = async (req: Request, res: Response) => {
+  const { search, status, is_premium, page = 1, pageSize = 10 } = req.query;
+  const skip = (Number(page) - 1) * Number(pageSize);
+  const take = Number(pageSize);
+
+  const where: any = {};
+  if (search) {
+    where.OR = [
+      { title: { contains: search as string, mode: 'insensitive' } },
+      { description: { contains: search as string, mode: 'insensitive' } },
+    ];
+  }
+  if (status) {
+    where.status = status as ListingStatus;
+  }
+  if (is_premium) {
+    where.is_premium = is_premium === 'true';
+  }
+
+  try {
+    const listings = await prisma.listing.findMany({
+      where,
+      skip,
+      take,
+      include: {
+        category: true,
+        owner: true,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+    const total = await prisma.listing.count({ where });
+
+    res.json({
+      listings: listings.map(listing => ({
+        ...listing,
+        owner_name: listing.owner.name,
+        category_name: listing.category.name,
+      })),
+      total,
+      page: Number(page),
+      pageSize: Number(pageSize),
+      totalPages: Math.ceil(total / Number(pageSize)),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching listings', error });
+  }
+}
+
+export const upgradeListingToPremium = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const updatedListing = await prisma.listing.update({
+      where: { id },
+      data: { is_premium: true },
+    });
+    res.json(updatedListing);
+  } catch (error) {
+    res.status(500).json({ message: 'Error upgrading listing to premium', error });
+  }
+}
+
+export const updateListing = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { ...data } = req.body;
+  try {
+    const updatedListing = await prisma.listing.update({
+      where: { id },
+      data,
+    });
+    res.json(updatedListing);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating listing', error });
+  }
+}
+
+export const deleteListing = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await prisma.listing.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting listing', error });
+  }
+}

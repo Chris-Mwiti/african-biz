@@ -12,6 +12,10 @@ import {
   getPendingListings,
   approveListing,
   rejectListing,
+  getAdminListings,
+  upgradeListingToPremium,
+  updateListing,
+  deleteListing,
 } from '../controllers/admin.controller';
 import {
   getBlogs,
@@ -35,7 +39,7 @@ import {
 } from '../controllers/category.controller'; // Reusing category controllers
 import { validationMiddleware } from '../middleware/validation.middleware';
 import { UpdateUserStatusDto, UpdateUserRoleDto } from '../dto/user.dto';
-import { UpdateListingStatusDto } from '../dto/listing.dto';
+import { UpdateListingStatusDto, UpdateListingDto } from '../dto/listing.dto';
 import { CreateBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { CreateEventDto, UpdateEventDto } from '../dto/event.dto';
 import { CreateCategoryDto, UpdateCategoryDto } from '../dto/category.dto';
@@ -56,10 +60,15 @@ router.put('/users/:id/status', validationMiddleware(UpdateUserStatusDto), updat
 router.put('/users/:id/role', validationMiddleware(UpdateUserRoleDto), updateUserRole);
 router.delete('/users/:id', deleteUser);
 
-// Listing Management (Pending Approvals)
+// Listing Management
+router.get('/listings', getAdminListings);
 router.get('/pending-listings', getPendingListings);
-router.put('/listings/:id/approve', validationMiddleware(UpdateListingStatusDto), approveListing); // Status will be 'APPROVED'
-router.put('/listings/:id/reject', validationMiddleware(UpdateListingStatusDto), rejectListing); // Status will be 'REJECTED'
+router.put('/listings/:id/approve',approveListing); // Status will be 'APPROVED'
+router.put('/listings/:id/reject',rejectListing); // Status will be 'REJECTED'
+router.put('/listings/:id/upgrade', upgradeListingToPremium);
+router.put('/listings/:id', validationMiddleware(UpdateListingDto), updateListing);
+router.delete('/listings/:id', deleteListing);
+
 
 // Blog Management (Admin specific - can reuse existing blog controllers)
 router.get('/blogs', getBlogs); // Potentially add admin-specific filters
