@@ -11,6 +11,15 @@ export const useLogin = () => {
   });
 };
 
+export const useGoogleLogin = () => {
+  return useMutation({
+    mutationFn: async (code: string) => {
+      const { data } = await api.post('/auth/google/callback', { code });
+      return data;
+    }
+  });
+};
+
 export const useRegister = () => {
   return useMutation({ 
     mutationFn: async (userData: SignUpDto) => {

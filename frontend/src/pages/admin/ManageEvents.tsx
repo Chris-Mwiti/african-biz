@@ -17,7 +17,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '../../components/ui/dialog';
 import {
   AlertDialog,
@@ -34,16 +33,14 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
-import { useGetEvents, useCreateEvent, useUpdateEvent, useDeleteEvent } from '../../services/event.service';
+import { useGetEvents, useUpdateEvent, useDeleteEvent } from '../../services/event.service';
 import { Event } from '../../lib/types';
-import { CreateEventDto, UpdateEventDto } from '../../dto/event.dto';
+import { UpdateEventDto } from '../../dto/event.dto';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
 import { Link } from 'react-router-dom';
-import CloudinaryUploadWidget from '../../components/CloudinaryUploadWidget'; // New import
-import { CreateEvent } from '../dashboard/CreateEvent';
 
 const eventFormSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -231,7 +228,7 @@ export function ManageEvents() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button variant="ghost" size="sm" asChild>
-                          <Link to={`/events/${event.id}`}>
+                          <Link to={`/event/${event.id}`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>

@@ -59,8 +59,38 @@ export function Auth({ mode }: AuthProps) {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+
+    if (!googleClientId || !redirectUri) {
+      toast.error('Google login is not configured. Please contact support.');
+      return;
+    }
+
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const options = {
+      redirect_uri: redirectUri,
+      client_id: googleClientId,
+      access_type: 'offline',
+      response_type: 'code',
+      prompt: 'consent',
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+      ].join(' '),
+    };
+
+    const qs = new URLSearchParams(options);
+    window.location.href = `${rootUrl}?${qs.toString()}`;
+  };
+
   const handleSocialLogin = (provider: string) => {
-    toast.info(`${provider} login coming soon!`);
+    if (provider === 'Google') {
+      toast.info(`${provider} login coming soon!`);
+    } else {
+      toast.info(`${provider} login coming soon!`);
+    }
   };
 
   return (

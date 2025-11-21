@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, LoginDto, SignUpDto } from '@/lib/types';
 import { STORAGE_KEYS } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
-import { useLogin, useRegister, useGetMe } from '@/services/auth.service';
+import { useLogin, useRegister, useGetMe, useGoogleLogin } from '@/services/auth.service';
 
 interface AuthContextType {
   user: User | null;
@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (credentials: LoginDto) => Promise<void>;
   logout: () => void;
   signup: (userData: SignUpDto) => Promise<void>;
+  googleLogin: (code: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,24 +29,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useLogin();
   const registerMutation = useRegister();
-  const { data: meData, isLoading: meIsLoading, isError: meIsError, error: meError } = useGetMe();
+  const googleLoginMutation = useGoogleLogin();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const { data: meData, isLoading: meIsLoading, isError: meIsError, error: meError, isSuccess: meIsSuccess } = useGetMe();
 
   useEffect(() => {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    if (token) {
-      if (meData) {
+    if (token && isInitialLoad) {
+      if (meIsSuccess && meData) {
         setUser(meData);
         setIsAuthenticated(true);
+        setIsInitialLoad(false);
       }
       setIsLoading(meIsLoading);
       setIsError(meIsError);
       setError(meError);
     } else {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }
-  }, [meData, meIsLoading, meIsError, meError]);
+  }, [meIsSuccess, meIsLoading, meIsError, meError, meData, isInitialLoad]);
 
-  const login = async (credentials: LoginDto) => {
+  const login = useCallback(async (credentials: LoginDto) => {
     try {
       const { token, user } = await loginMutation.mutateAsync(credentials);
       localStorage.setItem(STORAGE_KEYS.TOKEN, token);
@@ -61,9 +66,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError(err as Error);
       setIsError(true);
     }
-  };
+  }, [loginMutation, navigate]);
 
-  const signup = async (userData: SignUpDto) => {
+  const googleLogin = useCallback(async (code: string) => {
+    try {
+      const { token, user } = await googleLoginMutation.mutateAsync(code);
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+      setUser(user);
+      setIsAuthenticated(true);
+      if (user.role === 'ADMIN') {
+        navigate(ROUTES.ADMIN);
+      } else {
+        navigate(ROUTES.DASHBOARD);
+      }
+    } catch (err) {
+      setError(err as Error);
+      setIsError(true);
+    }
+  }, [googleLoginMutation, navigate]);
+
+  const signup = useCallback(async (userData: SignUpDto) => {
     try {
       await registerMutation.mutateAsync(userData);
       navigate(ROUTES.SIGNIN);
@@ -71,18 +94,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError(err as Error);
       setIsError(true);
     }
-  };
+  }, [registerMutation, navigate]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
     localStorage.removeItem(STORAGE_KEYS.USER);
     navigate(ROUTES.HOME);
-  };
+  }, [navigate]);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, signup, isLoading, isError, error }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, signup, googleLogin, isLoading, isError, error }}>
       {children}
     </AuthContext.Provider>
   );

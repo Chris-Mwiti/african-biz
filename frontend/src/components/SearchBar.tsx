@@ -2,26 +2,19 @@ import { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Label } from './ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from './ui/sheet';
 import { Badge } from './ui/badge';
 import { CATEGORIES, COUNTRIES } from '../lib/mockData';
 import { useSearchListings } from '../services/listing.service';
 import { Link } from 'react-router-dom';
+import {
+  FilterSheet,
+  FilterGroup,
+  FilterBadge,
+  CountrySelect,
+  CityInput,
+  ListingTypeFilter,
+} from './Filter';
+import { SheetTrigger } from './ui/sheet';
 
 interface SearchBarProps {
   onSearch?: (filters: SearchFilters) => void;
@@ -122,9 +115,14 @@ export function SearchBar({ onSearch, showFilters = true }: SearchBarProps) {
           Search
         </Button>
         {showFilters && (
-          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <FilterSheet
+            open={filtersOpen}
+            onOpenChange={setFiltersOpen}
+            onApply={handleSearch}
+            onClear={clearFilters}
+          >
             <SheetTrigger asChild>
-              <Button variant="outline" className="h-12 px-4">
+              <Button variant="outline" className="h-12 px-4" onClick={() => setFiltersOpen(true)}>
                 <Filter className="h-5 w-5" />
                 <span className="ml-2 hidden sm:inline">Filters</span>
                 {activeFiltersCount > 0 && (
@@ -134,119 +132,36 @@ export function SearchBar({ onSearch, showFilters = true }: SearchBarProps) {
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent className="w-full overflow-y-auto sm:max-w-md">
-              <SheetHeader>
-                <SheetTitle>Filter Listings</SheetTitle>
-                <SheetDescription>
-                  Refine your search with advanced filters
-                </SheetDescription>
-              </SheetHeader>
-
-              <div className="mt-6 space-y-6">
-                {/* Categories */}
-                <div className="space-y-2">
-                  <Label>Categories</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {CATEGORIES.map((category) => (
-                      <Badge
-                        key={category}
-                        variant={
-                          filters.category.includes(category) ? 'default' : 'outline'
-                        }
-                        className="cursor-pointer"
-                        onClick={() => toggleCategory(category)}
-                      >
-                        {category}
-                        {filters.category.includes(category) && (
-                          <X className="ml-1 h-3 w-3" />
-                        )}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Country */}
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  <Select
-                    value={filters.country}
-                    onValueChange={(value) =>
-                      setFilters((prev) => ({ ...prev, country: value }))
-                    }
-                  >
-                    <SelectTrigger id="country">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Countries</SelectItem>
-                      {COUNTRIES.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* City */}
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    placeholder="Enter city name"
-                    value={filters.city}
-                    onChange={(e) =>
-                      setFilters((prev) => ({ ...prev, city: e.target.value }))
-                    }
-                  />
-                </div>
-
-                {/* Listing Type */}
-                <div className="space-y-2">
-                  <Label>Listing Type</Label>
-                  <div className="flex gap-2">
-                    <Badge
-                      variant={filters.premium === null ? 'default' : 'outline'}
-                      className="cursor-pointer"
-                      onClick={() => setFilters((prev) => ({ ...prev, premium: null }))}
-                    >
-                      All
-                    </Badge>
-                    <Badge
-                      variant={filters.premium === true ? 'default' : 'outline'}
-                      className="cursor-pointer"
-                      onClick={() => setFilters((prev) => ({ ...prev, premium: true }))}
-                    >
-                      Premium Only
-                    </Badge>
-                    <Badge
-                      variant={filters.premium === false ? 'default' : 'outline'}
-                      className="cursor-pointer"
-                      onClick={() => setFilters((prev) => ({ ...prev, premium: false }))}
-                    >
-                      Free Only
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 pt-4">
-                  <Button onClick={clearFilters} variant="outline" className="flex-1">
-                    Clear All
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handleSearch();
-                      setFiltersOpen(false);
-                    }}
-                    className="flex-1"
-                  >
-                    Apply Filters
-                  </Button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+            <FilterGroup label="Categories">
+              {CATEGORIES.map((category) => (
+                <FilterBadge
+                  key={category}
+                  filter={{ value: category, label: category }}
+                  isActive={filters.category.includes(category)}
+                  onClick={toggleCategory}
+                />
+              ))}
+            </FilterGroup>
+            <CountrySelect
+              value={filters.country}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, country: value }))
+              }
+              countries={COUNTRIES.map(c => ({ value: c, label: c }))}
+            />
+            <CityInput
+              value={filters.city}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, city: e.target.value }))
+              }
+            />
+            <ListingTypeFilter
+              value={filters.premium}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, premium: value }))
+              }
+            />
+          </FilterSheet>
         )}
       </div>
 

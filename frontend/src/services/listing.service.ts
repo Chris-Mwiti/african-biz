@@ -4,7 +4,7 @@ import { Listing, PaginatedResponse } from '../lib/types';
 import { CreateListingDto, UpdateListingDto } from '../dto/listing.dto';
 
 
-export const useGetPublicListings = (page = 1, pageSize = 10, categoryId?: string, query?: string) => {
+export const useGetPublicListings = (page = 1, pageSize = 12, categoryId?: string, query?: string) => {
   return useQuery<PaginatedResponse<Listing>, Error>({
     queryKey: ['public-listings', page, pageSize, categoryId, query],
     queryFn: async () => {

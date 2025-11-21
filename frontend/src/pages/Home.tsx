@@ -29,7 +29,7 @@ export function Home() {
   const { data: listings, isLoading, isError } = useGetPublicListings();
 
   const premiumListings = listings?.data?.filter((l: Listing) => l.is_premium) || [];
-  const featuredListings = listings?.data.filter((l: Listing) => !l.is_premium).slice(0, 6) || [];
+  const featuredListings = listings?.data.filter((l: Listing) => !l.is_premium).slice(0, 8) || [];
   const recentBlogs = mockBlogs.slice(0, 3);
 
   const handleHomeSearch = (filters: SearchFilters) => {

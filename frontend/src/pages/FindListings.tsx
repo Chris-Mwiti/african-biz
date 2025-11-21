@@ -4,7 +4,6 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { SearchBar, SearchFilters } from '../components/SearchBar';
 import { ListingCard } from '../components/ListingCard';
 import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { useGetPublicListings } from '../services/listing.service';
 import { useGetCategories } from '../services/category.service';
@@ -20,7 +19,7 @@ export function FindListings() {
 
   const selectedCategoryId = searchParams.get('category');
 
-  const { data, isLoading, error } = useGetPublicListings(page, 10, selectedCategoryId || undefined);
+  const { data, isLoading, error } = useGetPublicListings(page, 12, selectedCategoryId || undefined);
   const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useGetCategories();
 
   const listings = data?.data || [];

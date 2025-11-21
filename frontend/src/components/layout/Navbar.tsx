@@ -42,8 +42,8 @@ export function Navbar({ onSearch }: NavbarProps) {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2 shrink-0 group">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-sm transition-transform group-hover:scale-105">
-              <ReactSVG src="/assets/nav-icon3.svg" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg   shadow-sm transition-transform group-hover:scale-105">
+              <img src="/nav-icon5.png" className='size-32 rounded-lg' alt='AYP' />
             </div>
             <div className="hidden flex-col sm:flex">
               <span className="font-semibold leading-tight text-secondary-foreground transition-colors group-hover:text-primary">

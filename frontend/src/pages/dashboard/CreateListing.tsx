@@ -10,7 +10,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, ArrowRight, CheckCircle2, X, PlusCircle, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, X, PlusCircle, Trash2, Terminal } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '../../contexts/AuthContext';
+import { useGetMyListings } from '../../services/listing.service';
+import { Role } from '@/dto/auth.dto';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const STEPS = [
   { id: 1, name: 'Basic Info', description: 'Business name and description', fields: ['title', 'description'] },
@@ -33,6 +37,8 @@ export function CreateListing() {
   const [currentStep, setCurrentStep] = useState(1);
   const { mutate: createListing, isPending } = useCreateListing();
   const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useGetCategories();
+  const { user } = useAuth();
+  const { data: listings, isLoading: isLoadingListings } = useGetMyListings();
 
   const form = useForm<CreateListingDto>({
     resolver: zodResolver(CreateListingSchema),
@@ -113,6 +119,27 @@ export function CreateListing() {
     const newImages = currentImages.filter((_, i) => i !== index);
     setValue('images', newImages, { shouldValidate: true });
   };
+
+  if (isLoadingListings) {
+    return <div>Loading...</div>;
+  }
+
+  if (user?.role === Role.MEMBER && listings && listings.length >= 5) {
+    return (
+      <div className="flex items-center justify-center h-full p-6">
+        <Alert className="max-w-lg">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Listing Limit Reached</AlertTitle>
+          <AlertDescription>
+            You have reached your limit of 5 listings as a Member. Please upgrade to a Premium plan to add more listings.
+            <Button onClick={() => navigate('/pricing')} className="mt-4">
+              Upgrade to Premium
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
