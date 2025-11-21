@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
+import { Role } from '@prisma/client';
 
 export const createEvent = async (req: Request, res: Response) => {
   let { title, description, start_datetime, end_datetime, location, banner_image, listing_id } = req.body;
-  const userId = req.user?.userId;
+  const user = req.user;
 
-  if (!userId) {
+  if (!user) {
     return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  if (user.role !== Role.PREMIUM) {
+    return res.status(403).json({ message: 'Members are not allowed to create events.' });
   }
 
   start_datetime = new Date(start_datetime)
@@ -22,7 +27,7 @@ export const createEvent = async (req: Request, res: Response) => {
         location,
         banner_image,
         listing_id,
-        creator_id: userId,
+        creator_id: user.userId,
       },
     });
 
@@ -30,7 +35,7 @@ export const createEvent = async (req: Request, res: Response) => {
     await prisma.listingAnalyticEvent.create({
       data: {
         listing_id,
-        user_id: userId,
+        user_id: user.userId,
         event_type: 'CREATE_EVENT',
       },
     });

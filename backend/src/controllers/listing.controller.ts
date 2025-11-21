@@ -3,13 +3,23 @@ import prisma from '../lib/prisma';
 
 export const createListing = async (req: Request, res: Response) => {
   const { title, description, address, phone, email, website, category_id, country, city, images } = req.body;
-  const userId = req.user?.userId; // Assuming userId is attached to req by auth middleware
+  const user = req.user; 
 
-  if (!userId) {
+  if (!user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
   try {
+    if (user.role === 'MEMBER') {
+      const count = await prisma.listing.count({
+        where: { owner_id: user.userId },
+      });
+
+      if (count >= 5) {
+        return res.status(403).json({ message: 'Members can only create up to 5 listings.' });
+      }
+    }
+
     const listing = await prisma.listing.create({
       data: {
         address,
@@ -21,7 +31,7 @@ export const createListing = async (req: Request, res: Response) => {
         email,
         website,
         category_id,
-        owner_id: userId,
+        owner_id: user.userId,
         images, // Include images here
       },
     });
@@ -32,16 +42,16 @@ export const createListing = async (req: Request, res: Response) => {
 };
 
 export const getListings = async (req: Request, res: Response) => {
-  const userId = req.user?.userId; // Assuming userId is attached to req by auth middleware
+  const user = req.user;
 
-  if (!userId) {
+  if (!user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
   try {
     const listings = await prisma.listing.findMany({
       where: {
-        owner_id: userId,
+        owner_id: user.userId,
       },
       include: {
         category: true,
@@ -74,7 +84,7 @@ export const getListingById = async (req: Request, res: Response) => {
 
 export const getPublicListings = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
-  const pageSize = parseInt(req.query.pageSize as string) || 10;
+  const pageSize = parseInt(req.query.pageSize as string) || 12;
   const skip = (page - 1) * pageSize;
 
   try {

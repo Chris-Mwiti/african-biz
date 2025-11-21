@@ -3,6 +3,87 @@ import prisma from '../lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { SignUpDto, LoginDto } from '../dto/auth.dto';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client({
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+  redirectUri: process.env.GOOGLE_REDIRECT_URI
+});
+
+export const googleCallback = async (req: Request, res: Response) => {
+  console.log('Google callback called');
+  const { code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ message: 'Authorization code is required' });
+  }
+
+  try {
+    const { tokens } = await client.getToken({
+      code,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    });
+    const idToken = tokens.id_token;
+
+    if (!idToken) {
+      return res.status(400).json({ message: 'ID token not found' });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload) {
+      return res.status(400).json({ message: 'Invalid ID token' });
+    }
+
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email not found in Google profile' });
+    }
+
+    let user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (user) {
+      // If user exists, link their Google account
+      if (!user.googleId) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { googleId },
+        });
+      }
+    } else {
+      // If user doesn't exist, create a new one
+      user = await prisma.user.create({
+        data: {
+          email,
+          name: name || 'Google User',
+          googleId,
+          password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10), // Generate a random password
+          country_of_residence: 'Unknown', // Or try to get it from Google profile
+          profile_image: picture,
+        },
+      });
+    }
+
+    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET as string, {
+      expiresIn: 24 * 60 * 60,
+    });
+
+    res.json({ token, user });
+    console.log(token)
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: 'Something went wrong during Google login' });
+  }
+};
 
 export const signup = async (req: Request, res: Response) => {
   const { email, password, name, country_of_residence }: SignUpDto = req.body;
