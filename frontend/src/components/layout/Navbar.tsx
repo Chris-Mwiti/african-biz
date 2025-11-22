@@ -17,7 +17,6 @@ import { Badge } from '../ui/badge';
 import { ROUTES } from '../../constants/routes';
 import { getInitials } from '../../utils/formatters';
 import { Role } from '@/dto/auth.dto';
-import { ReactSVG } from 'react-svg';
 import { Menu } from '@headlessui/react';
 
 interface NavbarProps {
@@ -43,7 +42,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2 shrink-0 group">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg   shadow-sm transition-transform group-hover:scale-105">
-              <img src="/nav-icon5.png" className='size-32 rounded-lg' alt='AYP' />
+              <img src="/nav-icon5.png" className='size-40 rounded-lg' alt='AYP' />
             </div>
             <div className="hidden flex-col sm:flex">
               <span className="font-semibold leading-tight text-secondary-foreground transition-colors group-hover:text-primary">
