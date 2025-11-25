@@ -14,7 +14,8 @@ import {
   Share2,
   ArrowLeft,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Dialog, DialogContent } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -28,6 +29,9 @@ export function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: listing, isLoading, error } = useGetListing(id || '');
   const { mutate: trackEvent } = useTrackAnalyticEvent();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState('');
 
   useEffect(() => {
     if (listing?.id) {
@@ -78,7 +82,13 @@ export function ListingDetail() {
             <div className="mb-6 overflow-hidden rounded-lg">
               {listing.images && listing.images.length > 0 ? (
                 <div className="grid gap-2">
-                  <div className="relative h-114 w-full  overflow-hidden rounded-lg bg-muted">
+                  <div
+                    className="relative h-114 w-full cursor-pointer overflow-hidden rounded-lg bg-muted"
+                    onClick={() => {
+                      setCurrentImage(listing.images[0]);
+                      setIsModalOpen(true);
+                    }}
+                  >
                     <ImageWithFallback
                       src={listing.images[0]}
                       alt={listing.title}
@@ -88,7 +98,14 @@ export function ListingDetail() {
                   {listing.images.length > 1 && (
                     <div className="grid grid-cols-4 gap-2">
                       {listing.images.slice(1, 5).map((image, index) => (
-                        <div key={index} className="relative h-24 overflow-hidden rounded-lg bg-muted">
+                        <div
+                          key={index}
+                          className="relative h-24 cursor-pointer overflow-hidden rounded-lg bg-muted"
+                          onClick={() => {
+                            setCurrentImage(image);
+                            setIsModalOpen(true);
+                          }}
+                        >
                           <ImageWithFallback
                             src={image}
                             alt={`${listing.title} ${index + 2}`}
@@ -362,6 +379,15 @@ export function ListingDetail() {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-screen-lg p-0">
+          {currentImage && (
+            <img src={currentImage} alt="Full size listing image" className="h-auto w-full object-contain" />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
