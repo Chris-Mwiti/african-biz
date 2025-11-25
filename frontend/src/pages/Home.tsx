@@ -302,31 +302,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Latest from the Community */}
-      {recentBlogs.length > 0 && (
-        <section className="bg-muted/30 py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="mb-2">Latest from the Community</h2>
-                <p className="text-muted-foreground">
-                  Stories, tips, and insights from diaspora entrepreneurs
-                </p>
-              </div>
-              <Button asChild variant="outline">
-                <Link to="/blogs">View All</Link>
-              </Button>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {recentBlogs.map((blog) => (
-                <BlogCard key={blog.id} blog={blog} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Ready to Grow Your Business? Section */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
