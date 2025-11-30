@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { UserStatus } from '@/lib/types';
 
 export enum Role {
+  GUEST = 'GUEST',
   MEMBER = 'MEMBER',
   PREMIUM = 'PREMIUM',
   ADMIN = 'ADMIN',

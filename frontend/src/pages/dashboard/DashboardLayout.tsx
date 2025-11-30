@@ -20,12 +20,13 @@ import { useState } from 'react';
 import { cn } from '../../components/ui/utils';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Avatar, AvatarFallback } from '../../components/ui/avatar';
+import { AvatarImage } from '@radix-ui/react-avatar';
 import { Menu, MenuButton } from '@headlessui/react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockUser } from '../../lib/mockData';
 import { ROUTES } from '@/constants/routes';
 import { Role } from '@/dto/auth.dto';
+import GuestDashboard from './GuestDashboard';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -45,8 +46,11 @@ export function DashboardLayout() {
   const { logout, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   if (!user){
-    navigate(ROUTES.SIGNIN)
-    return
+    return <GuestDashboard />;
+  }
+
+  if (user.role == Role.GUEST){
+    return <GuestDashboard />
   }
   const isPremium = user?.role === Role.PREMIUM;
 
@@ -193,16 +197,16 @@ export function DashboardLayout() {
               <div>
                 <Menu.Button as={Button} variant="ghost" size="icon">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={mockUser.profile_image} alt={mockUser.name} />
-                    <AvatarFallback>{mockUser.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={user.profile_image} alt={user.name} />
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </Menu.Button>
               </div>
               <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="px-1 py-1">
                   <div className="px-2 py-2">
-                    <p className="text-sm">{mockUser.name}</p>
-                    <p className="text-xs text-muted-foreground">{mockUser.email}</p>
+                    <p className="text-sm">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <div className="px-1 py-1">

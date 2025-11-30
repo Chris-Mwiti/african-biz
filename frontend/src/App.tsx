@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Unpaid } from './pages/Unpaid';
 import { Home } from './pages/Home';
 import { FindListings } from './pages/FindListings';
 import { ListingDetail } from './pages/ListingDetail';
@@ -45,16 +46,17 @@ function App() {
         <div className="flex min-h-screen flex-col bg-background">
           <Routes>
             {/* Public Routes */}
-            <Route element={<DefaultLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/find-listings" element={<FindListings />} />
-              <Route path="/listing/:id" element={<ListingDetail />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/event/:id" element={<EventDetail />} />
-              <Route path="/blogs" element={<Blogs />} />
-              <Route path="/blog/:id" element={<BlogDetail />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/contact" element={<Contact />} />
+            <Route path="/" element={<Unpaid />} />
+            <Route path="/home" element={<DefaultLayout />}>
+              <Route index element={<Home />} />
+              <Route path="find-listings" element={<FindListings />} />
+              <Route path="listing/:id" element={<ListingDetail />} />
+              <Route path="events" element={<Events />} />
+              <Route path="event/:id" element={<EventDetail />} />
+              <Route path="blogs" element={<Blogs />} />
+              <Route path="blog/:id" element={<BlogDetail />} />
+              <Route path="pricing" element={<Pricing />} />
+              <Route path="contact" element={<Contact />} />
             </Route>
 
             {/* Auth Routes */}
@@ -66,7 +68,7 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute allowedRoles={[Role.MEMBER, Role.PREMIUM]}>
+                <ProtectedRoute allowedRoles={[Role.GUEST, Role.MEMBER, Role.PREMIUM]}>
                   <DashboardLayout />
                 </ProtectedRoute>
               }
