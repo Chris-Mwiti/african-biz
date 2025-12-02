@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { Unpaid } from './pages/Unpaid';
 import { Home } from './pages/Home';
+import { Unpaid } from './pages/Unpaid';
 import { FindListings } from './pages/FindListings';
 import { ListingDetail } from './pages/ListingDetail';
 import { Auth } from './pages/Auth';
@@ -211,7 +211,6 @@ function App() {
               }
             />
           </Routes>
-
           <Toaster />
         </div>
       </AuthProvider>
