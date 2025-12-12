@@ -46,8 +46,7 @@ function App() {
         <div className="flex min-h-screen flex-col bg-background">
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Unpaid />} />
-            <Route path="/home" element={<DefaultLayout />}>
+            <Route path="/" element={<DefaultLayout />}>
               <Route index element={<Home />} />
               <Route path="find-listings" element={<FindListings />} />
               <Route path="listing/:id" element={<ListingDetail />} />

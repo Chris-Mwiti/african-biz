@@ -4,13 +4,13 @@
 
 // Public routes
 export const ROUTES = {
-  HOME: '/home',
-  FIND_LISTINGS: '/home/find-listings',
-  LISTING_DETAIL: (id: string) => `/home/listing/${id}`,
-  EVENTS: '/home/events',
-  BLOGS: '/home/blogs',
-  PRICING: '/home/pricing',
-  CONTACT: '/home/contact',
+  HOME: '/',
+  FIND_LISTINGS: '/find-listings',
+  LISTING_DETAIL: (id: string) => `/listing/${id}`,
+  EVENTS: '/events',
+  BLOGS: '/blogs',
+  PRICING: '//pricing',
+  CONTACT: '//contact',
   SIGNIN: '/signin',
   SIGNUP: '/signup',
   
